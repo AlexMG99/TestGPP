@@ -8,12 +8,14 @@ namespace Game.Stack.Core
     {
         private StackManager.DirectionAxis directionAxis;
         private float speed;
+        public Rigidbody Rb => rb;
         private Rigidbody rb;
 
         bool isMoving = true;
         int stackNum = 0;
         float offsetY = 0;
 
+        [Header("Events")]
         [SerializeField] private VoidEventSO OnStackBlockPlaced;
 
         public StackBlock Init(StackManager.DirectionAxis dA, float _speed, float _offsetY, int _stackNum)
@@ -30,7 +32,7 @@ namespace Game.Stack.Core
         // Update is called once per frame
         void Update()
         {
-            if (isMoving)
+            if (isMoving && GameManager.Instance.CheckGameState(GameManager.GameState.GS_PLAY))
             {
                 Move();
                 CheckState();
@@ -67,7 +69,8 @@ namespace Game.Stack.Core
         {
             if(collision.transform.CompareTag("Player") && isMoving)
             {
-                StopBlock();
+                if(collision.transform.position.y > transform.position.y)
+                    StopBlock();
             }
         }
 
@@ -77,6 +80,13 @@ namespace Game.Stack.Core
             //rb.isKinematic = false;
             //rb.useGravity = true;
             OnStackBlockPlaced.RaisedEvent();
+        }
+
+        public void Explode()
+        {
+            rb.isKinematic = false;
+            rb.AddForce(500f * ((directionAxis == StackManager.DirectionAxis.A_FORWARD) ? transform.forward : transform.right));
+            Destroy(gameObject, 1f);
         }
     }
 }

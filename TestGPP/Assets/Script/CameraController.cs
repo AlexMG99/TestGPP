@@ -6,17 +6,29 @@ namespace Game.Stack.Core
 {
     public class CameraController : MonoBehaviour
     {
-        [SerializeField] private VoidEventSO OnStackBlockPlaced;
         [SerializeField] private StackBlockSO stackBlockSO;
+
+        [Header("Events")]
+        [SerializeField] private VoidEventSO OnStackBlockPlaced;
+        [SerializeField] private VoidEventSO OnGameRestart;
+
+        private Vector3 initialPos;
+
+        private void Start()
+        {
+            initialPos = transform.position;
+        }
 
         private void OnEnable()
         {
             OnStackBlockPlaced.OnEventRaised += MoveCameraUp;
+            OnGameRestart.OnEventRaised += SetCameraInitialPos;
         }
 
         private void OnDisable()
         {
             OnStackBlockPlaced.OnEventRaised -= MoveCameraUp;
+            OnGameRestart.OnEventRaised -= SetCameraInitialPos;
         }
 
         void MoveCameraUp()
@@ -32,6 +44,11 @@ namespace Game.Stack.Core
                 transform.position = Vector3.MoveTowards(transform.position, reachPos, 2f * Time.deltaTime);
                 yield return null;
             }
+        }
+
+        void SetCameraInitialPos()
+        {
+            transform.position = initialPos;
         }
     }
 }

@@ -9,6 +9,10 @@ namespace Game.Stack.Core
         [SerializeField]
         private float jumpForce = 10f;
 
+        [Header("Events")]
+        [SerializeField] private VoidEventSO OnGameEnd;
+
+        public Rigidbody Rb => rb;
         private Rigidbody rb;
         private bool isJumping = false;
 
@@ -22,7 +26,7 @@ namespace Game.Stack.Core
         void Update()
         {
 #if UNITY_EDITOR
-            if (Input.GetMouseButtonDown(0) && !isJumping)
+            if (Input.GetMouseButtonDown(0) && !isJumping && GameManager.Instance.CheckGameState(GameManager.GameState.GS_PLAY))
                 Jump();
 #endif
 
@@ -41,6 +45,14 @@ namespace Game.Stack.Core
         {
             if (collision.transform.CompareTag("StackBlock"))
                 isJumping = false;
+        }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            if (other.CompareTag("Death"))
+            {
+                OnGameEnd.RaisedEvent();
+            }
         }
     }
 }

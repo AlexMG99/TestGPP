@@ -12,12 +12,62 @@ namespace Game.Stack.Core
         [SerializeField] private Transform playerSpawn;
         [SerializeField] List<SkinPlayerSO> playerSkins = new List<SkinPlayerSO>();
 
+        [Header("Events")]
+        [SerializeField] private VoidEventSO OnStartGame;
+        [SerializeField] private VoidEventSO OnGameEnd;
+        [SerializeField] private VoidEventSO OnGameRestart;
+
+        public int StackCount => stackCount;
+        private int stackCount = 0;
+
         int idxPlayerSkin = 0;
+
+        public static GameManager Instance;
+
+        private GameState gameState = GameState.GS_START;
+
+        public enum GameState
+        {
+            GS_RESTART,
+            GS_START,
+            GS_PLAY,
+            GS_END
+        };
+
+        private void OnEnable()
+        {
+            OnStartGame.OnEventRaised += StartGame;
+            OnGameEnd.OnEventRaised += EndGame;
+            OnGameRestart.OnEventRaised += RestartGame;
+        }
+
+        private void OnDisable()
+        {
+            OnStartGame.OnEventRaised -= StartGame;
+            OnGameEnd.OnEventRaised -= EndGame;
+            OnGameRestart.OnEventRaised -= RestartGame;
+        }
+
+        private void Awake()
+        {
+            if (!Instance)
+                Instance = this;
+            else
+                Destroy(gameObject);
+        }
 
         // Start is called before the first frame update
         void Start()
         {
             // Player
+            CreatePlayer();
+        }
+
+        void CreatePlayer()
+        {
+            if (playerInstance)
+                Destroy(playerInstance.gameObject);
+
             playerInstance = Instantiate(playerPrefab, playerSpawn.position, playerSpawn.rotation);
             idxPlayerSkin = PlayerPrefs.GetInt("idxPlayerSkin", 0);
             playerInstance.GetComponent<PlayerSkin>().ChangeSkin(playerSkins[idxPlayerSkin]);
@@ -39,8 +89,35 @@ namespace Game.Stack.Core
                 playerInstance.GetComponent<PlayerSkin>().ChangeSkin(playerSkins[idxPlayerSkin]);
                 PlayerPrefs.SetInt("idxPlayerSkin", idxPlayerSkin);
             }
-
 #endif
+        }
+
+        public void StartGame()
+        {
+            stackCount = 0;
+            CreatePlayer();
+            gameState = GameState.GS_PLAY;
+        }
+
+        public void EndGame()
+        {
+            gameState = GameState.GS_END;
+        }
+
+        public void RestartGame()
+        {
+            gameState = GameState.GS_RESTART;
+            
+        }
+
+        public void IncreaseStackCount()
+        {
+            stackCount++;
+        }
+
+        public bool CheckGameState(GameState _gameState)
+        {
+            return (gameState == _gameState);
         }
     }
 }

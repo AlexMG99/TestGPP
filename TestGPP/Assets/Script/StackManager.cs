@@ -11,23 +11,19 @@ namespace Game.Stack.Core
         [SerializeField] private Transform spawnPointX;
         [SerializeField] private Transform spawnPointZ;
 
-        private int stackCount = 0;
         private DirectionAxis directionAxis = DirectionAxis.A_FORWARD;
         private float stackBlockSpeed;
-        public static StackManager Instance;
+        private List<StackBlock> stackBlocks = new List<StackBlock>();
 
+        [Header("Events")]
         [SerializeField] private VoidEventSO OnStackBlockPlaced;
+        [SerializeField] private VoidEventSO OnGameRestart;
 
         public enum DirectionAxis
         {
             A_NONE,
             A_FORWARD,
             A_RIGHT
-        }
-
-        void Awake()
-        {
-            Instance = this;
         }
 
         private void Start()
@@ -38,11 +34,13 @@ namespace Game.Stack.Core
         private void OnEnable()
         {
             OnStackBlockPlaced.OnEventRaised += SpawnStackBlock;
+            OnGameRestart.OnEventRaised += RestartGame;
         }
 
         private void OnDisable()
         {
             OnStackBlockPlaced.OnEventRaised -= SpawnStackBlock;
+            OnGameRestart.OnEventRaised -= RestartGame;
         }
 
         // Update is called once per frame
@@ -57,13 +55,30 @@ namespace Game.Stack.Core
         private void SpawnStackBlock()
         {
             Vector3 spawnPos = (directionAxis == DirectionAxis.A_RIGHT) ? spawnPointX.position : spawnPointZ.position;
-            spawnPos.y = stackCount * stackBlockSO.OffsetY;
+            spawnPos.y = GameManager.Instance.StackCount * stackBlockSO.OffsetY;
 
-            StackBlock stackBlock = Instantiate(stackBlockSO.StackPrefab, spawnPos, Quaternion.identity, transform).Init(directionAxis, stackBlockSpeed, stackBlockSO.OffsetY, stackCount);
+            StackBlock stackBlock = Instantiate(stackBlockSO.StackPrefab, spawnPos, Quaternion.identity, transform).Init(directionAxis, stackBlockSpeed, stackBlockSO.OffsetY, GameManager.Instance.StackCount);
             stackBlockSpeed += stackBlockSO.AccMov;
             directionAxis = (directionAxis == DirectionAxis.A_RIGHT) ? DirectionAxis.A_FORWARD : DirectionAxis.A_RIGHT;
+            stackBlocks.Add(stackBlock);
 
-            stackCount++;
+            GameManager.Instance.IncreaseStackCount();
+        }
+
+        private void RestartGame()
+        {
+            StartCoroutine(DestroyStack());
+        }
+
+        private IEnumerator DestroyStack()
+        {
+            foreach(StackBlock stackBlock in stackBlocks)
+            {
+                stackBlock.Explode();
+                yield return new WaitForSeconds(0.05f);
+            }
+
+            stackBlocks.Clear();
         }
     }
 }
