@@ -6,10 +6,13 @@ namespace Game.Stack.Core
 {
     public class StackManager : MonoBehaviour
     {
+        [Header("Stack Configuration")]
         [SerializeField] private StackBlockSO stackBlockSO;
 
         [SerializeField] private Transform spawnPointX;
         [SerializeField] private Transform spawnPointZ;
+
+        [SerializeField] private MeshRenderer startPlatform;
 
         private DirectionAxis directionAxis = DirectionAxis.A_FORWARD;
         private float stackBlockSpeed;
@@ -29,6 +32,8 @@ namespace Game.Stack.Core
         private void Start()
         {
             stackBlockSpeed = stackBlockSO.SpeedMov;
+
+            startPlatform.material.color = stackBlockSO.Gradient.GetColor();
         }
 
         private void OnEnable()
@@ -57,7 +62,7 @@ namespace Game.Stack.Core
             Vector3 spawnPos = (directionAxis == DirectionAxis.A_RIGHT) ? spawnPointX.position : spawnPointZ.position;
             spawnPos.y = GameManager.Instance.StackCount * stackBlockSO.OffsetY;
 
-            StackBlock stackBlock = Instantiate(stackBlockSO.StackPrefab, spawnPos, Quaternion.identity, transform).Init(directionAxis, stackBlockSpeed, stackBlockSO.OffsetY, GameManager.Instance.StackCount);
+            StackBlock stackBlock = Instantiate(stackBlockSO.StackPrefab, spawnPos, Quaternion.identity, transform).Init(directionAxis, stackBlockSpeed, stackBlockSO.OffsetY, GameManager.Instance.StackCount, stackBlockSO.Gradient.GetColor());
             stackBlockSpeed += stackBlockSO.AccMov;
             directionAxis = (directionAxis == DirectionAxis.A_RIGHT) ? DirectionAxis.A_FORWARD : DirectionAxis.A_RIGHT;
             stackBlocks.Add(stackBlock);

@@ -17,3 +17,4 @@ MonoBehaviour:
   offsetY: 0.2
   speedMov: 0.01
   accMov: 0.001
+  gradient: {fileID: 11400000, guid: 8eab4107215c08147b2d4978c85599b7, type: 2}

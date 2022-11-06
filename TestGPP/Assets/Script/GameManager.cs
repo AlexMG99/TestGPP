@@ -56,13 +56,6 @@ namespace Game.Stack.Core
                 Destroy(gameObject);
         }
 
-        // Start is called before the first frame update
-        void Start()
-        {
-            // Player
-            CreatePlayer();
-        }
-
         void CreatePlayer()
         {
             if (playerInstance)

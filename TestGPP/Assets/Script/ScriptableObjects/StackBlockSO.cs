@@ -23,5 +23,10 @@ namespace Game.Stack.Core
         [SerializeField]
         private float accMov;
         public float AccMov { get => accMov; set => accMov = value; }
+
+        [SerializeField]
+        private GradientSO gradient;
+        public GradientSO Gradient { get => gradient; set => gradient = value; }
+
     }
 }

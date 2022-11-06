@@ -10,6 +10,7 @@ namespace Game.Stack.Core
         private float speed;
         public Rigidbody Rb => rb;
         private Rigidbody rb;
+        private MeshRenderer meshRenderer;
 
         bool isMoving = true;
         int stackNum = 0;
@@ -18,9 +19,12 @@ namespace Game.Stack.Core
         [Header("Events")]
         [SerializeField] private VoidEventSO OnStackBlockPlaced;
 
-        public StackBlock Init(StackManager.DirectionAxis dA, float _speed, float _offsetY, int _stackNum)
+        public StackBlock Init(StackManager.DirectionAxis dA, float _speed, float _offsetY, int _stackNum, Color col)
         {
             rb = GetComponent<Rigidbody>();
+            meshRenderer = GetComponent<MeshRenderer>();
+
+            ChangeColor(col);
 
             directionAxis = dA;
             offsetY = _offsetY;
@@ -87,6 +91,11 @@ namespace Game.Stack.Core
             rb.isKinematic = false;
             rb.AddForce(500f * ((directionAxis == StackManager.DirectionAxis.A_FORWARD) ? transform.forward : transform.right));
             Destroy(gameObject, 1f);
+        }
+
+        public void ChangeColor(Color col)
+        {
+            meshRenderer.material.color = col;
         }
     }
 }
