@@ -45,12 +45,12 @@ namespace Game.Stack.Core
             {
                 case StackManager.DirectionAxis.A_FORWARD:
                     {
-                        rb.MovePosition(transform.position - (transform.forward * speed * Time.deltaTime));
+                        rb.MovePosition(transform.position - (transform.forward * speed));
                     }
                     break;
                 case StackManager.DirectionAxis.A_RIGHT:
                     {
-                        rb.MovePosition(transform.position + (transform.right * speed * Time.deltaTime));
+                        rb.MovePosition(transform.position + (transform.right * speed));
                     }
                     break;
             }

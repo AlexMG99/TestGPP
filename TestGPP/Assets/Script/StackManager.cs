@@ -72,9 +72,9 @@ namespace Game.Stack.Core
 
         private IEnumerator DestroyStack()
         {
-            foreach(StackBlock stackBlock in stackBlocks)
+            for(int i = stackBlocks.Count - 1; i >= 0; i--)
             {
-                stackBlock.Explode();
+                stackBlocks[i].Explode();
                 yield return new WaitForSeconds(0.05f);
             }
 
