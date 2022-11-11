@@ -24,6 +24,8 @@ namespace Game.Stack.Core
         [SerializeField] private VoidEventSO OnStackBlockPlaced;
         [SerializeField] private VoidEventSO OnGameRestart;
 
+        int comboCount = 0;
+
         public enum DirectionAxis
         {
             A_NONE,
@@ -111,6 +113,21 @@ namespace Game.Stack.Core
         public void SetSpawnOffset(Vector2 newSpawnOffset)
         {
             spawnOffset = newSpawnOffset;
+        }
+
+        public void ResetComboCount()
+        {
+            comboCount = 0;
+        }
+
+        public void IncreaseComboCount()
+        {
+            comboCount++;
+        }
+
+        public int GetComboCount()
+        {
+            return comboCount;
         }
     }
 }

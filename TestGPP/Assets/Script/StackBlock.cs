@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using DG.Tweening;
 namespace Game.Stack.Core
 {
     public class StackBlock : MonoBehaviour
@@ -17,6 +17,11 @@ namespace Game.Stack.Core
         float thresholdPerfect = 0.05f;
         Vector3 centerStack;
         Vector3 direction;
+
+        [SerializeField]
+        private ParticleSystem pSPerfect;
+        [SerializeField]
+        private ParticleSystem pSPerfectCombo;
 
         [Header("Events")]
         [SerializeField] private VoidEventSO OnStackBlockPlaced;
@@ -91,9 +96,45 @@ namespace Game.Stack.Core
             // Check if is perfect placed
             if (!isPerfect)
                 SplitBlock();
+            else
+                ComboParticleEffect();
 
             isMoving = false;
             OnStackBlockPlaced.RaisedEvent();
+        }
+
+        void ComboParticleEffect()
+        {
+            stackManager.IncreaseComboCount();
+
+            // Normal combo
+            ParticleSystem ps = Instantiate(pSPerfectCombo, pSPerfectCombo.transform.position, pSPerfectCombo.transform.rotation, transform);
+            ps.Play();
+
+            int comboStart = 4;
+            // Combo x+
+            if (stackManager.GetComboCount() >= comboStart)
+            {
+                StartCoroutine(SpawnComboParticles(stackManager.GetComboCount() - comboStart, 0.4f));
+            }
+        }
+
+        IEnumerator SpawnComboParticles(int count, float delay)
+        {
+            float scale = 1f;
+
+            if (count > 4)
+                count = 4;
+            while(count >= 0)
+            {
+                ParticleSystem ps = Instantiate(pSPerfect, pSPerfect.transform.position, pSPerfect.transform.rotation, transform);
+                ps.Play();
+                ps.transform.DOScale(scale, ps.startLifetime);
+
+                scale += 0.2f;
+                count--;
+                yield return new WaitForSeconds(delay);   
+            }
         }
 
         void SplitBlock()
@@ -105,19 +146,22 @@ namespace Game.Stack.Core
             Vector3 newScale = Vector3.zero;
             float initialScale = 0f;
 
+            // Create newBlock
+            GameObject newBlock = Instantiate(gameObject);
+
             switch (directionAxis)
             {
                 case StackManager.DirectionAxis.A_FORWARD:
                     {
                         newScale = new Vector3(transform.localScale.x, transform.localScale.y, transform.localScale.z - distToCenter);
-
+                        newBlock.transform.localScale = new Vector3(newBlock.transform.localScale.x, newBlock.transform.localScale.y, distToCenter);
                         initialScale = transform.localScale.z;
                     }
                     break;
                 case StackManager.DirectionAxis.A_RIGHT:
                     {
                         newScale = new Vector3(transform.localScale.x - distToCenter, transform.localScale.y, transform.localScale.z);
-
+                        newBlock.transform.localScale = new Vector3(distToCenter, newBlock.transform.localScale.y, newBlock.transform.localScale.z);
                         initialScale = transform.localScale.x;
                     }
                     break;
@@ -126,28 +170,7 @@ namespace Game.Stack.Core
             transform.position = newPos;
             transform.localScale = newScale;
 
-            // Update stackPrefab
-            stackManager.SetSpawnOffset(new Vector2(newPos.x, newPos.z));
-            stackManager.SetStackBlockScale(newScale);
-
-            // Create newBlock
-            GameObject newBlock = Instantiate(gameObject,
-                centerStack - (initialScale - distToCenter) * direction,
-                Quaternion.identity);
-            
-            switch (directionAxis)
-            {
-                case StackManager.DirectionAxis.A_FORWARD:
-                    {
-                        newBlock.transform.localScale = new Vector3(newBlock.transform.localScale.x, newBlock.transform.localScale.y, distToCenter);
-                    }
-                    break;
-                case StackManager.DirectionAxis.A_RIGHT:
-                    {
-                        newBlock.transform.localScale = new Vector3(distToCenter, newBlock.transform.localScale.y, newBlock.transform.localScale.z);
-                    }
-                    break;
-            }
+            newBlock.transform.position = centerStack - (initialScale - distToCenter) * direction;
 
             Rigidbody rb = newBlock.GetComponent<Rigidbody>();
             rb.isKinematic = false;
@@ -155,6 +178,12 @@ namespace Game.Stack.Core
 
             Destroy(newBlock.GetComponent<StackBlock>());
             Destroy(newBlock.gameObject, 4f);
+
+            // Update stackPrefab
+            stackManager.SetSpawnOffset(new Vector2(newPos.x, newPos.z));
+            stackManager.SetStackBlockScale(newScale);
+
+            stackManager.ResetComboCount();
 
         }
 
