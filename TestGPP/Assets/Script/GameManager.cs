@@ -12,6 +12,9 @@ namespace Game.Stack.Core
         [SerializeField] private Transform playerSpawn;
         [SerializeField] List<SkinPlayerSO> playerSkins = new List<SkinPlayerSO>();
 
+        public StackBlockSO StackBlockSO => stackBlockSO;
+        [SerializeField] private StackBlockSO stackBlockSO;
+
         [Header("Events")]
         [SerializeField] private VoidEventSO OnStartGame;
         [SerializeField] private VoidEventSO OnGameEnd;

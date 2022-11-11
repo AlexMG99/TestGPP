@@ -16,6 +16,8 @@ namespace Game.Stack.Core
 
         private DirectionAxis directionAxis = DirectionAxis.A_FORWARD;
         private float stackBlockSpeed;
+        private Vector3 stackBlockScale;
+        private Vector2 spawnOffset;
         private List<StackBlock> stackBlocks = new List<StackBlock>();
 
         [Header("Events")]
@@ -31,7 +33,14 @@ namespace Game.Stack.Core
 
         private void Start()
         {
+            Init();
+        }
+        void Init()
+        {
+            spawnOffset = Vector2.zero;
+
             stackBlockSpeed = stackBlockSO.SpeedMov;
+            stackBlockScale = stackBlockSO.StackPrefab.transform.localScale;
 
             startPlatform.material.color = stackBlockSO.Gradient.GetColor();
         }
@@ -61,8 +70,14 @@ namespace Game.Stack.Core
         {
             Vector3 spawnPos = (directionAxis == DirectionAxis.A_RIGHT) ? spawnPointX.position : spawnPointZ.position;
             spawnPos.y = GameManager.Instance.StackCount * stackBlockSO.OffsetY;
+            spawnPos += transform.right * spawnOffset.x + transform.forward * spawnOffset.y;
 
-            StackBlock stackBlock = Instantiate(stackBlockSO.StackPrefab, spawnPos, Quaternion.identity, transform).Init(directionAxis, stackBlockSpeed, stackBlockSO.OffsetY, GameManager.Instance.StackCount, stackBlockSO.Gradient.GetColor());
+            Vector3 centerPos = GameManager.Instance.StackCount * stackBlockSO.OffsetY * transform.up + transform.right * spawnOffset.x + transform.forward * spawnOffset.y;
+
+            StackBlock stackBlock = Instantiate(stackBlockSO.StackPrefab, spawnPos, Quaternion.identity, transform).
+                Init(directionAxis, stackBlockSpeed, centerPos, stackBlockSO.Gradient.GetColor(), this);
+             stackBlock.transform.localScale = stackBlockScale;
+
             stackBlockSpeed += stackBlockSO.AccMov;
             directionAxis = (directionAxis == DirectionAxis.A_RIGHT) ? DirectionAxis.A_FORWARD : DirectionAxis.A_RIGHT;
             stackBlocks.Add(stackBlock);
@@ -72,6 +87,8 @@ namespace Game.Stack.Core
 
         private void RestartGame()
         {
+            Init();
+
             StartCoroutine(DestroyStack());
         }
 
@@ -84,6 +101,16 @@ namespace Game.Stack.Core
             }
 
             stackBlocks.Clear();
+        }
+
+        public void SetStackBlockScale(Vector3 newScale)
+        {
+            stackBlockScale = newScale;
+        }
+
+        public void SetSpawnOffset(Vector2 newSpawnOffset)
+        {
+            spawnOffset = newSpawnOffset;
         }
     }
 }

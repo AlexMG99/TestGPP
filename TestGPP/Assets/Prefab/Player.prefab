@@ -270,6 +270,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   jumpForce: 200
+  OnStackBlockPlaced: {fileID: 11400000, guid: e13b8ff6f05ea2245bc14e7fd390a015, type: 2}
   OnGameEnd: {fileID: 11400000, guid: 46bb48c86b45be74180038d46c5aa2bc, type: 2}
 --- !u!114 &1341769644226563822
 MonoBehaviour:

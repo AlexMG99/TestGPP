@@ -10,11 +10,22 @@ namespace Game.Stack.Core
         private float jumpForce = 10f;
 
         [Header("Events")]
+        [SerializeField] private VoidEventSO OnStackBlockPlaced;
         [SerializeField] private VoidEventSO OnGameEnd;
 
         public Rigidbody Rb => rb;
         private Rigidbody rb;
         private bool isJumping = false;
+
+        private void OnEnable()
+        {
+            OnStackBlockPlaced.OnEventRaised += CheckPlayerPos;
+        }
+
+        private void OnDisable()
+        {
+            OnStackBlockPlaced.OnEventRaised -= CheckPlayerPos;
+        }
 
         // Start is called before the first frame update
         void Start()
@@ -26,7 +37,7 @@ namespace Game.Stack.Core
         void Update()
         {
 #if UNITY_EDITOR
-            if (Input.GetMouseButtonDown(0) && !isJumping && GameManager.Instance.CheckGameState(GameManager.GameState.GS_PLAY))
+            if ((Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space)) && !isJumping && GameManager.Instance.CheckGameState(GameManager.GameState.GS_PLAY))
                 Jump();
 #endif
 
@@ -53,6 +64,12 @@ namespace Game.Stack.Core
             {
                 OnGameEnd.RaisedEvent();
             }
+        }
+
+        void CheckPlayerPos()
+        {
+            if(transform.position.y < (GameManager.Instance.StackCount - 1) * GameManager.Instance.StackBlockSO.OffsetY)
+                OnGameEnd.RaisedEvent();
         }
     }
 }

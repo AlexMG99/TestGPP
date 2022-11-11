@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 namespace Game.Stack.Core
 {
@@ -33,22 +34,12 @@ namespace Game.Stack.Core
 
         void MoveCameraUp()
         {
-            StartCoroutine(MoveCameraUpRoutine());
-        }
-
-        IEnumerator MoveCameraUpRoutine()
-        {
-            Vector3 reachPos = transform.position + Vector3.up * stackBlockSO.OffsetY;
-            while (Vector3.Distance(reachPos, transform.position) > 0.05f)
-            {
-                transform.position = Vector3.MoveTowards(transform.position, reachPos, 2f * Time.deltaTime);
-                yield return null;
-            }
+            transform.DOMoveY(transform.position.y + stackBlockSO.OffsetY, 0.5f);
         }
 
         void SetCameraInitialPos()
         {
-            transform.position = initialPos;
+            transform.DOMove(initialPos, 0.5f);
         }
     }
 }
