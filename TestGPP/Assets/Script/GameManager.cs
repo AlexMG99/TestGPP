@@ -12,6 +12,8 @@ namespace Game.Stack.Core
         [SerializeField] private Transform playerSpawn;
         [SerializeField] List<SkinPlayerSO> playerSkins = new List<SkinPlayerSO>();
 
+        public StackManager StackManagerInstace => stackManagerInstance;
+        [SerializeField] private StackManager stackManagerInstance;
         public StackBlockSO StackBlockSO => stackBlockSO;
         [SerializeField] private StackBlockSO stackBlockSO;
 

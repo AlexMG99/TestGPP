@@ -45,12 +45,12 @@ namespace Game.Stack.Core
 
         private void OnEnable()
         {
-            //OnStackBlockPlaced.OnEventRaised += CheckPlayerPos;
+            OnStackBlockPlaced.OnEventRaised += MovePlayerToCenter;
         }
 
         private void OnDisable()
         {
-            //OnStackBlockPlaced.OnEventRaised -= CheckPlayerPos;
+            OnStackBlockPlaced.OnEventRaised -= MovePlayerToCenter;
         }
 
         // Start is called before the first frame update
@@ -136,10 +136,11 @@ namespace Game.Stack.Core
             }
         }
 
-        void CheckPlayerPos()
+        void MovePlayerToCenter()
         {
-            if(transform.position.y < (GameManager.Instance.StackCount - 1) * GameManager.Instance.StackBlockSO.OffsetY)
-                OnGameEnd.RaisedEvent();
+            Vector3 centerPos = GameManager.Instance.StackManagerInstace.GetCenterPosition();
+            centerPos.y = transform.position.y;
+            transform.DOMove(centerPos, 0.1f);
         }
     }
 }

@@ -121,6 +121,11 @@ namespace Game.Stack.Core
             spawnOffset = newSpawnOffset;
         }
 
+        public Vector3 GetCenterPosition()
+        {
+            return GameManager.Instance.StackCount * stackBlockSO.OffsetY * transform.up + transform.right * spawnOffset.x + transform.forward * spawnOffset.y;
+        }
+
         public void ResetComboCount()
         {
             comboCount = 0;

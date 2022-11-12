@@ -75,7 +75,7 @@ namespace Game.Stack.Core
             if(moveToLimit)
                 rb.MovePosition(transform.position + (direction * speed));
             else
-                rb.MovePosition(transform.position + (direction * speed));
+                rb.MovePosition(transform.position - (direction * speed));
         }
 
         private void CheckState()
@@ -94,7 +94,6 @@ namespace Game.Stack.Core
                         if (Mathf.Abs(moveToPoint.position.z - transform.position.z) < 0.25F)
                         {
                             moveToLimit = !moveToLimit;
-                            direction = -direction;
                         }
                     }
                     break;
@@ -110,7 +109,6 @@ namespace Game.Stack.Core
                         if (Mathf.Abs(moveToPoint.position.x - transform.position.x) < 0.25F)
                         {
                             moveToLimit = !moveToLimit;
-                            direction = -direction;
                         }
                     }
                     break;
