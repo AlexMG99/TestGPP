@@ -28,6 +28,8 @@ namespace Game.Stack.Core
 
         StackManager stackManager;
 
+        bool moveToLimit = true;
+
         public StackBlock Init(StackManager.DirectionAxis dA, float _speed, Vector3 _centerStack, Color col, StackManager _stackManager)
         {
             rb = GetComponent<Rigidbody>();
@@ -70,16 +72,51 @@ namespace Game.Stack.Core
 
         private void Move()
         {
-            rb.MovePosition(transform.position + (direction * speed));
+            if(moveToLimit)
+                rb.MovePosition(transform.position + (direction * speed));
+            else
+                rb.MovePosition(transform.position + (direction * speed));
         }
 
         private void CheckState()
         {
-            if (Vector3.Distance(centerStack, transform.localPosition) < thresholdPerfect)
+            switch (directionAxis)
             {
-                StopBlock(true);
-                transform.localPosition = centerStack;
+                case StackManager.DirectionAxis.A_FORWARD:
+                    {
+                        Transform moveToPoint;
+
+                        if (moveToLimit)
+                            moveToPoint = stackManager.LimitPointZ;
+                        else
+                            moveToPoint = stackManager.SpawnPointZ;
+
+                        if (Mathf.Abs(moveToPoint.position.z - transform.position.z) < 0.25F)
+                        {
+                            moveToLimit = !moveToLimit;
+                            direction = -direction;
+                        }
+                    }
+                    break;
+                case StackManager.DirectionAxis.A_RIGHT:
+                    {
+                        Transform moveToPoint;
+
+                        if (moveToLimit)
+                            moveToPoint = stackManager.LimitPointX;
+                        else
+                            moveToPoint = stackManager.SpawnPointX;
+
+                        if (Mathf.Abs(moveToPoint.position.x - transform.position.x) < 0.25F)
+                        {
+                            moveToLimit = !moveToLimit;
+                            direction = -direction;
+                        }
+                    }
+                    break;
             }
+
+           
         }
 
         private void OnCollisionEnter(Collision collision)
@@ -97,7 +134,10 @@ namespace Game.Stack.Core
             if (!isPerfect)
                 SplitBlock();
             else
+            {
+                transform.localPosition = centerStack;
                 ComboParticleEffect();
+            }
 
             isMoving = false;
             OnStackBlockPlaced.RaisedEvent();
@@ -142,9 +182,7 @@ namespace Game.Stack.Core
         void SplitBlock()
         {
             // Break block by faking
-            float distToCenter = Vector3.Distance(centerStack, transform.localPosition);
-            Vector3 newPos = transform.position + direction * distToCenter * 0.5f;
-
+            float distToCenter = 0f;
             Vector3 newScale = Vector3.zero;
             float initialScale = 0f;
 
@@ -155,24 +193,30 @@ namespace Game.Stack.Core
             {
                 case StackManager.DirectionAxis.A_FORWARD:
                     {
-                        newScale = new Vector3(transform.localScale.x, transform.localScale.y, transform.localScale.z - distToCenter);
-                        newBlock.transform.localScale = new Vector3(newBlock.transform.localScale.x, newBlock.transform.localScale.y, distToCenter);
+                        distToCenter = transform.localPosition.z - centerStack.z;
+                        newScale = new Vector3(transform.localScale.x, transform.localScale.y, transform.localScale.z - Mathf.Abs(distToCenter));
+                        newBlock.transform.localScale = new Vector3(newBlock.transform.localScale.x, newBlock.transform.localScale.y, Mathf.Abs(distToCenter));
                         initialScale = transform.localScale.z;
                     }
                     break;
                 case StackManager.DirectionAxis.A_RIGHT:
                     {
-                        newScale = new Vector3(transform.localScale.x - distToCenter, transform.localScale.y, transform.localScale.z);
-                        newBlock.transform.localScale = new Vector3(distToCenter, newBlock.transform.localScale.y, newBlock.transform.localScale.z);
+                        distToCenter = centerStack.x - transform.localPosition.x;
+                        newScale = new Vector3(transform.localScale.x - Mathf.Abs(distToCenter), transform.localScale.y, transform.localScale.z);
+                        newBlock.transform.localScale = new Vector3(Mathf.Abs(distToCenter), newBlock.transform.localScale.y, newBlock.transform.localScale.z);
                         initialScale = transform.localScale.x;
                     }
                     break;
             }
 
+            Vector3 newPos = transform.position + direction * distToCenter * 0.5f;
             transform.position = newPos;
             transform.localScale = newScale;
 
-            newBlock.transform.position = centerStack - (initialScale - distToCenter) * direction;
+            if(Mathf.Sign(distToCenter) > 0)
+                newBlock.transform.position = centerStack - (initialScale + distToCenter) * direction * 0.5f;
+            else
+                newBlock.transform.position = centerStack + (initialScale - distToCenter) * direction * 0.5f;
 
             Rigidbody rb = newBlock.GetComponent<Rigidbody>();
             rb.isKinematic = false;

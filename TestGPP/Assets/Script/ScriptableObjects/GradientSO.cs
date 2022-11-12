@@ -10,7 +10,7 @@ public class GradientSO : ScriptableObject
     public Gradient Gradient { get => gradient; set => gradient = value; }
 
     [SerializeField]
-    private float speed = 0;
+    private float step = 0;
 
     private float currentValue = 0;
     public Color GetColor()
@@ -18,7 +18,7 @@ public class GradientSO : ScriptableObject
         if (currentValue > 1)
             currentValue = 0;
         else
-            currentValue += speed;
+            currentValue += step;
         return gradient.Evaluate(currentValue);
     }
 }

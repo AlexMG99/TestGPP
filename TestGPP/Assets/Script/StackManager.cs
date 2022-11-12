@@ -9,8 +9,14 @@ namespace Game.Stack.Core
         [Header("Stack Configuration")]
         [SerializeField] private StackBlockSO stackBlockSO;
 
+        public Transform SpawnPointX => spawnPointX;
         [SerializeField] private Transform spawnPointX;
+        public Transform LimitPointX => limitPointX;
+        [SerializeField] private Transform limitPointX;
+        public Transform SpawnPointZ => spawnPointZ;
         [SerializeField] private Transform spawnPointZ;
+        public Transform LimitPointZ => limitPointZ;
+        [SerializeField] private Transform limitPointZ;
 
         [SerializeField] private MeshRenderer startPlatform;
 

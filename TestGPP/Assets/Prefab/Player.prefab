@@ -29,7 +29,9 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 8052156787082406556}
+  - {fileID: 9001276652754327691}
   m_Father: {fileID: 8768520069863404725}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -117,8 +119,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8768520069863404725}
-  - {fileID: 9001276652754327691}
-  - {fileID: 8052156787082406556}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -137,7 +137,7 @@ MonoBehaviour:
   jumpForce: 200
   staminaSliderBGImage: {fileID: 2512889353399546087}
   staminaSliderFillImage: {fileID: 4270448178068739885}
-  maxTimeFly: 1
+  maxTimeFly: 2
   OnStackBlockPlaced: {fileID: 11400000, guid: e13b8ff6f05ea2245bc14e7fd390a015, type: 2}
   OnGameEnd: {fileID: 11400000, guid: 46bb48c86b45be74180038d46c5aa2bc, type: 2}
 --- !u!114 &7918828774619550735
@@ -235,8 +235,8 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1099766706622134995}
-  m_Father: {fileID: 4613328291921411829}
-  m_RootOrder: 2
+  m_Father: {fileID: 1702510220954595210}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -531,7 +531,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 4613328291921411829}
+  m_Father: {fileID: 1702510220954595210}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!96 &9001276652754327690
