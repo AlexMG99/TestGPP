@@ -15,6 +15,23 @@ namespace Game.Stack.Core
 
         private Vector3 initialPos;
 
+        private void Start()
+        {
+            initialPos = transform.position;
+        }
+
+        private void OnEnable()
+        {
+            OnStackBlockPlaced.OnEventRaised += MoveTriggerUp;
+            OnGameRestart.OnEventRaised += SetTriggerInitialPos;
+        }
+
+        private void OnDisable()
+        {
+            OnStackBlockPlaced.OnEventRaised -= MoveTriggerUp;
+            OnGameRestart.OnEventRaised -= SetTriggerInitialPos;
+        }
+
         void MoveTriggerUp()
         {
             transform.DOMoveY(transform.position.y + stackBlockSO.OffsetY, 0.5f);
