@@ -25,6 +25,9 @@ namespace Game.Stack.Core
         public int StackCount => stackCount;
         private int stackCount = 0;
 
+        public int Coins => coins;
+        private int coins = 0;
+
         int idxPlayerSkin = 0;
 
         public static GameManager Instance;
@@ -59,6 +62,16 @@ namespace Game.Stack.Core
                 Instance = this;
             else
                 Destroy(gameObject);
+
+            QualitySettings.vSyncCount = 1;
+            Application.targetFrameRate = 60;
+
+            coins = PlayerPrefs.GetInt("Coins", 0);
+        }
+
+        private void OnApplicationQuit()
+        {
+            PlayerPrefs.SetInt("Coins", coins);
         }
 
         void CreatePlayer()
@@ -100,6 +113,7 @@ namespace Game.Stack.Core
         public void EndGame()
         {
             gameState = GameState.GS_END;
+            PlayerPrefs.SetInt("Coins", coins);
         }
 
         public void RestartGame()
@@ -111,6 +125,11 @@ namespace Game.Stack.Core
         public void IncreaseStackCount()
         {
             stackCount++;
+        }
+
+        public void AddCoin()
+        {
+            coins++;
         }
 
         public bool CheckGameState(GameState _gameState)

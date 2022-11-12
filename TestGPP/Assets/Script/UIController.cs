@@ -10,13 +10,15 @@ namespace Game.Stack.Core
     public class UIController : MonoBehaviour
     {
         [Header("Title Elements")]
-        [SerializeField] private TextMeshProUGUI titleText;
-        [SerializeField] private Button startButton;
-        [SerializeField] private TextMeshProUGUI startText;
-        [SerializeField] private Button restartButton;
-        [SerializeField] private TextMeshProUGUI restartText;
+        [SerializeField] private CanvasGroup menuGame;
+        [SerializeField] private CanvasGroup playGame;
+        [SerializeField] private CanvasGroup endGame;
 
         [SerializeField] private TextMeshProUGUI scoreText;
+        [SerializeField] private TextMeshProUGUI scoreTextEndScreen;
+        [SerializeField] private TextMeshProUGUI highScoreText;
+
+        [SerializeField] private TextMeshProUGUI coinsText;
 
         [Header("Events")]
         [SerializeField] private VoidEventSO OnStackBlockPlaced;
@@ -36,12 +38,17 @@ namespace Game.Stack.Core
             OnGameEnd.OnEventRaised -= EndGame;
         }
 
+        private void Start()
+        {
+            coinsText.text = GameManager.Instance.Coins.ToString();
+        }
+
         public void StartGame()
         {
             float time = 0.5f;
-            titleText.DOFade(0f, time);
-            startText.DOFade(0f, time);
-            startButton.enabled = false;
+            menuGame.DOFade(0f, 0.1f);
+            menuGame.interactable = false;
+            playGame.DOFade(1f, time);
 
             OnGameStarted.RaisedEvent();
             OnStackBlockPlaced.RaisedEvent();
@@ -49,19 +56,22 @@ namespace Game.Stack.Core
         public void EndGame()
         {
             float time = 0.5f;
-            restartText.DOFade(1f, time);
-            restartButton.enabled = true;
+            endGame.interactable = true;
+            endGame.DOFade(1f, time);
+
+            playGame.DOFade(0f, 0.1f);
+
+            CheckHighScore();
         }
 
         public void RestartGame()
         {
             float time = 0.5f;
-            titleText.DOFade(1f, time);
-            startText.DOFade(1f, time);
-            scoreText.DOFade(0f, 0.01f);
-            restartText.DOFade(0f, time);
-            restartButton.enabled = false;
-            startButton.enabled = true;
+            endGame.DOFade(0f, 0.1f);
+            endGame.interactable = false;
+
+            menuGame.DOFade(1f, time);
+            menuGame.interactable = true;
 
             OnGameRestart.RaisedEvent();
         }
@@ -69,8 +79,20 @@ namespace Game.Stack.Core
         void ModifyScore()
         {
             scoreText.text = GameManager.Instance.StackCount.ToString();
-            if(GameManager.Instance.StackCount != 0)
+            coinsText.text = GameManager.Instance.Coins.ToString();
+
+            scoreTextEndScreen.text = GameManager.Instance.StackCount.ToString();
+
+            if (GameManager.Instance.StackCount != 0)
                 scoreText.DOFade(1f, 0.5f);
+        }
+
+        void CheckHighScore()
+        {
+            if (GameManager.Instance.StackCount > PlayerPrefs.GetInt("HighScore", 0))
+                PlayerPrefs.SetInt("HighScore", GameManager.Instance.StackCount);
+
+            highScoreText.text = PlayerPrefs.GetInt("HighScore", 0).ToString();
         }
     }
 }

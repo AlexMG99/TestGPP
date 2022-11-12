@@ -75,7 +75,24 @@ namespace Game.Stack.Core
 #endif
 
 #if UNITY_IOS || UNITY_ANDROID
-        
+                // Handle screen touches.
+                if (Input.touchCount > 0)
+                {
+                    Touch touch = Input.GetTouch(0);
+
+                    if (touch.phase == TouchPhase.Began && playerState == PlayerState.PS_IDLE)
+                    {
+                        Jump();
+                    }
+                    else if ((touch.phase == TouchPhase.Stationary || touch.phase == TouchPhase.Moved) && (playerState == PlayerState.PS_JUMP || playerState == PlayerState.PS_FLOAT) && percentageStamina > 0f)
+                    {
+                        FloatBall();
+                    }
+                    else if ((touch.phase == TouchPhase.Ended || percentageStamina <= 0f) && playerState == PlayerState.PS_FLOAT)
+                    {
+                        FallBall();
+                    }
+                }
 #endif
             }
         }
@@ -85,7 +102,7 @@ namespace Game.Stack.Core
             rb.AddForce(transform.up * jumpForce);
             playerState = PlayerState.PS_JUMP;
 
-            anim.SetTrigger("Jump");
+            transform.DOPunchScale(Vector3.one * 0.05f, 0.25f, 2);
         }
 
         private void FloatBall()

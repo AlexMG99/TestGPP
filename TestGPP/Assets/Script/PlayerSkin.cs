@@ -12,6 +12,14 @@ namespace Game.Stack.Core
         public void ChangeSkin(SkinPlayerSO playerSkinSO)
         {
             meshRenderer.material.color = playerSkinSO.ColSkin;
+            float hCol;
+            float sCol;
+            float vCol;
+            Color.RGBToHSV(playerSkinSO.ColSkin, out hCol, out sCol, out vCol);
+            Color emissionColor = Color.HSVToRGB(hCol, sCol, vCol - 0.15f);
+            meshRenderer.material.SetColor("_EmissionColor", emissionColor);
+            meshRenderer.material.EnableKeyword("_EMISSION");
+
             trail.colorGradient = playerSkinSO.TrailColor;
         }
     }

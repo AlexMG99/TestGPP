@@ -134,6 +134,9 @@ namespace Game.Stack.Core
             else
             {
                 transform.localPosition = centerStack;
+                GameManager.Instance.AddCoin();
+                transform.DOPunchScale(Vector3.one * 0.05f, 0.25f, 2);
+
                 ComboParticleEffect();
             }
 
@@ -144,6 +147,8 @@ namespace Game.Stack.Core
         void ComboParticleEffect()
         {
             Audio.AudioManager.Instance.PlaySFX("SFX_Perfect");
+
+            Handheld.Vibrate();
 
             stackManager.IncreaseComboCount();
 
