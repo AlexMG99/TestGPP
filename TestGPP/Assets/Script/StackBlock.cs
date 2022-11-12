@@ -105,17 +105,19 @@ namespace Game.Stack.Core
 
         void ComboParticleEffect()
         {
+            Audio.AudioManager.Instance.PlaySFX("SFX_Perfect");
+
             stackManager.IncreaseComboCount();
 
             // Normal combo
-            ParticleSystem ps = Instantiate(pSPerfectCombo, pSPerfectCombo.transform.position, pSPerfectCombo.transform.rotation, transform);
+            ParticleSystem ps = Instantiate(pSPerfect, pSPerfect.transform.position, pSPerfect.transform.rotation, transform);
             ps.Play();
 
             int comboStart = 4;
             // Combo x+
             if (stackManager.GetComboCount() >= comboStart)
             {
-                StartCoroutine(SpawnComboParticles(stackManager.GetComboCount() - comboStart, 0.4f));
+                StartCoroutine(SpawnComboParticles(stackManager.GetComboCount() - comboStart, pSPerfectCombo.startLifetime * 0.7f));
             }
         }
 
@@ -127,11 +129,11 @@ namespace Game.Stack.Core
                 count = 4;
             while(count >= 0)
             {
-                ParticleSystem ps = Instantiate(pSPerfect, pSPerfect.transform.position, pSPerfect.transform.rotation, transform);
+                ParticleSystem ps = Instantiate(pSPerfectCombo, pSPerfectCombo.transform.position, pSPerfectCombo.transform.rotation, transform);
                 ps.Play();
-                ps.transform.DOScale(scale, ps.startLifetime);
+                ps.transform.DOScale(scale, ps.startLifetime * 0.5f);
 
-                scale += 0.2f;
+                scale += 0.1f;
                 count--;
                 yield return new WaitForSeconds(delay);   
             }
@@ -184,6 +186,9 @@ namespace Game.Stack.Core
             stackManager.SetStackBlockScale(newScale);
 
             stackManager.ResetComboCount();
+
+            Audio.AudioManager.Instance.PlaySFX("SFX_Chop");
+            Audio.AudioManager.Instance.BreakIncrementPitch("SFX_Perfect");
 
         }
 
