@@ -14,7 +14,7 @@ namespace Game.Stack.Core
 
         bool isMoving = true;
 
-        float thresholdPerfect = 0.05f;
+        float thresholdPerfect = 0.25f;
         Vector3 centerStack;
         Vector3 direction;
 
@@ -149,10 +149,6 @@ namespace Game.Stack.Core
 
         void ComboParticleEffect()
         {
-            Audio.AudioManager.Instance.PlaySFX("SFX_Perfect");
-
-            //Handheld.Vibrate();
-
             stackManager.IncreaseComboCount();
 
             // Normal combo
@@ -164,7 +160,18 @@ namespace Game.Stack.Core
             if (stackManager.GetComboCount() >= comboStart)
             {
                 StartCoroutine(SpawnComboParticles(stackManager.GetComboCount() - comboStart, pSPerfectCombo.startLifetime * 0.7f));
+
+                if (stackManager.GetComboCount() > comboStart)
+                {
+                    GrowBlock();
+                }
+                else
+                {
+                    Audio.AudioManager.Instance.PlaySFX("SFX_Perfect");
+                }
             }
+            else
+                Audio.AudioManager.Instance.PlaySFX("SFX_Perfect");
         }
 
         IEnumerator SpawnComboParticles(int count, float delay)
@@ -257,6 +264,46 @@ namespace Game.Stack.Core
 
             Audio.AudioManager.Instance.PlaySFX("SFX_Chop");
             Audio.AudioManager.Instance.BreakIncrementPitch("SFX_Perfect");
+
+        }
+
+        void GrowBlock()
+        {
+            // Break block by faking
+            Vector3 newScale = Vector3.zero;
+            float growScale = 0.1f;
+
+            switch (directionAxis)
+            {
+                case StackManager.DirectionAxis.A_FORWARD:
+                    {
+                        float zScale = (transform.localScale.z + growScale) > 1 ? 1 : (transform.localScale.z + growScale);
+                        newScale = new Vector3(transform.localScale.x, transform.localScale.y, zScale);
+                    }
+                    break;
+                case StackManager.DirectionAxis.A_RIGHT:
+                    {
+                        float xScale = (transform.localScale.x + growScale) > 1 ? 1 : (transform.localScale.x + growScale);
+                        newScale = new Vector3(xScale, transform.localScale.y, transform.localScale.z);
+                    }
+                    break;
+            }
+
+            if (newScale.x >= 1 || newScale.z >= 1)
+            {
+                Audio.AudioManager.Instance.PlaySFX("SFX_Perfect");
+                return;
+            }
+
+            Vector3 newPos = transform.position + direction * growScale * 0.5f;
+            transform.DOMove(newPos, 0.25f);
+            transform.DOScale(newScale, 0.25f);
+
+            // Update stackPrefab
+            stackManager.SetSpawnOffset(new Vector2(newPos.x, newPos.z));
+            stackManager.SetStackBlockScale(newScale);
+
+            Audio.AudioManager.Instance.PlaySFX("SFX_Grow");
 
         }
 

@@ -29,3 +29,11 @@ MonoBehaviour:
     incrementPitch: 1
     incrementPitchValue: 0.1
     incrementPitchMax: 2
+  - clipName: SFX_Grow
+    audioClip: {fileID: 8300000, guid: 8c512041a76dfd14486f51458300d9e0, type: 3}
+    intensityFactor: 0.6
+    pitchMin: 1
+    pitchMax: 1
+    incrementPitch: 0
+    incrementPitchValue: 0.1
+    incrementPitchMax: 2

@@ -128,8 +128,8 @@ namespace Game.Stack.Core
 
         public void OpenPlayerStore()
         {
-            playerStore.transform.DOMove(transform.position, 1.5f).SetEase(Ease.OutElastic);
-            playerStore.DOFade(1f, 0.5f);
+            playerStore.transform.DOMove(transform.position, 1f);
+            playerStore.DOFade(1f, 0.25f);
             playerStore.interactable = true;
             playerStore.blocksRaycasts = true;
             storeButton.gameObject.SetActive(false);
@@ -137,8 +137,8 @@ namespace Game.Stack.Core
 
         public void ClosePlayerStore()
         {
-            playerStore.transform.DOMoveY(transform.position.y - Screen.height, 1.5f).SetEase(Ease.InElastic);
-            playerStore.DOFade(1f, 0.5f);
+            playerStore.transform.DOMoveY(transform.position.y - Screen.height, 1f);
+            playerStore.DOFade(1f, 0.25f);
             playerStore.interactable = false;
             playerStore.blocksRaycasts = false;
             storeButton.gameObject.SetActive(true);
