@@ -114,6 +114,7 @@ namespace Game.Stack.Core
                 PlayerPrefs.SetInt("idxPlayerSkin", idxPlayerSkin);
             }
 #endif
+
         }
 
         public void StartGame()
