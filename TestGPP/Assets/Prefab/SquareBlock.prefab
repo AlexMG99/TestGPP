@@ -9853,7 +9853,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe42dc8cab6720347a24d064b33d9e4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  thresholdPerfect: 0.1
+  thresholdPerfect: 0.05
   comboStart: 4
   pSPerfect: {fileID: 3861863592986276491}
   pSPerfectCombo: {fileID: 3875849101826700885}
