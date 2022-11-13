@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 64b1f9b1d37b55a468a669d73f26ebef, type: 3}
-  m_Name: SkinPlayerBlue
+  m_Name: SkinPlayerOrange
   m_EditorClassIdentifier: 
-  colSkin: {r: 0, g: 0.7117429, b: 1, a: 1}
+  colSkin: {r: 1, g: 0.44455943, b: 0, a: 1}
   trailColor:
     serializedVersion: 2
-    key0: {r: 0, g: 0.7530308, b: 1, a: 1}
-    key1: {r: 0.48329332, g: 0.13510147, b: 0.8679245, a: 0.9759634}
+    key0: {r: 1, g: 0.37324363, b: 0, a: 1}
+    key1: {r: 0.82468396, g: 0.8666667, b: 0.13333333, a: 0.9759634}
     key2: {r: 0, g: 0, b: 0, a: 0.49522492}
     key3: {r: 0, g: 0, b: 0, a: 0.44705883}
     key4: {r: 0, g: 0, b: 0, a: 0}
@@ -44,6 +44,6 @@ MonoBehaviour:
     m_NumAlphaKeys: 4
   hasTexture: 0
   textSkin: {fileID: 0}
-  nameSkin: Blue
+  nameSkin: Orange
   priceSkin: 50
   storeSprite: {fileID: 21300000, guid: 5ba6775c0398bc948b2d79c6c6bad1c4, type: 3}

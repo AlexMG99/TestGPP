@@ -147,7 +147,7 @@ namespace Game.Stack.Core
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.CompareTag("Death"))
+            if (other.CompareTag("Death") && GameManager.Instance.CheckGameState(GameManager.GameState.GS_PLAY))
             {
                 OnGameEnd.RaisedEvent();
             }

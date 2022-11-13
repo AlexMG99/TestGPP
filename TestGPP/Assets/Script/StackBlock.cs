@@ -25,6 +25,7 @@ namespace Game.Stack.Core
 
         [Header("Events")]
         [SerializeField] private VoidEventSO OnStackBlockPlaced;
+        [SerializeField] private VoidEventSO OnGameEnd;
 
         StackManager stackManager;
 
@@ -122,7 +123,7 @@ namespace Game.Stack.Core
             if(collision.transform.CompareTag("Player") && isMoving)
             {
                 if(collision.transform.position.y > transform.position.y)
-                    StopBlock(Vector3.Distance(centerStack, transform.localPosition) < thresholdPerfect);
+                    StopBlock(Vector3.Distance(centerStack, transform.localPosition) < thresholdPerfect && (transform.localScale.x > 0.05f && (transform.localScale.z > 0.05f)));
             }
         }
 
@@ -130,7 +131,9 @@ namespace Game.Stack.Core
         {
             // Check if is perfect placed
             if (!isPerfect)
+            {
                 SplitBlock();
+            }
             else
             {
                 transform.localPosition = centerStack;
@@ -197,6 +200,7 @@ namespace Game.Stack.Core
                 case StackManager.DirectionAxis.A_FORWARD:
                     {
                         distToCenter = transform.localPosition.z - centerStack.z;
+
                         newScale = new Vector3(transform.localScale.x, transform.localScale.y, transform.localScale.z - Mathf.Abs(distToCenter));
                         newBlock.transform.localScale = new Vector3(newBlock.transform.localScale.x, newBlock.transform.localScale.y, Mathf.Abs(distToCenter));
                         initialScale = transform.localScale.z;
@@ -205,6 +209,7 @@ namespace Game.Stack.Core
                 case StackManager.DirectionAxis.A_RIGHT:
                     {
                         distToCenter = centerStack.x - transform.localPosition.x;
+
                         newScale = new Vector3(transform.localScale.x - Mathf.Abs(distToCenter), transform.localScale.y, transform.localScale.z);
                         newBlock.transform.localScale = new Vector3(Mathf.Abs(distToCenter), newBlock.transform.localScale.y, newBlock.transform.localScale.z);
                         initialScale = transform.localScale.x;
@@ -212,9 +217,25 @@ namespace Game.Stack.Core
                     break;
             }
 
+            if (moveToLimit && distToCenter < 0)
+            {
+                OnGameEnd.RaisedEvent();
+                Rb.isKinematic = false;
+                Rb.useGravity = true;
+                return;
+            }
+            else if (!moveToLimit && distToCenter > 0)
+            {
+                OnGameEnd.RaisedEvent();
+                Rb.isKinematic = false;
+                Rb.useGravity = true;
+                return;
+            }
+
             Vector3 newPos = transform.position + direction * distToCenter * 0.5f;
             transform.position = newPos;
             transform.localScale = newScale;
+
 
             if(Mathf.Sign(distToCenter) > 0)
                 newBlock.transform.position = centerStack - (initialScale + distToCenter) * direction * 0.5f;

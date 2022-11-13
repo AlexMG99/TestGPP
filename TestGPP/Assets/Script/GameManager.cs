@@ -8,8 +8,10 @@ namespace Game.Stack.Core
     {
         [Header("Player Settings")]
         [SerializeField] private GameObject playerPrefab;
+        public GameObject PlayerInstance => playerInstance;
         private GameObject playerInstance;
         [SerializeField] private Transform playerSpawn;
+        public List<SkinPlayerSO> PlayerSkins => playerSkins;
         [SerializeField] List<SkinPlayerSO> playerSkins = new List<SkinPlayerSO>();
 
         public StackManager StackManagerInstace => stackManagerInstance;
@@ -84,6 +86,17 @@ namespace Game.Stack.Core
             playerInstance.GetComponent<PlayerSkin>().ChangeSkin(playerSkins[idxPlayerSkin]);
         }
 
+        public void SetPlayerSkin(int idx)
+        {
+            idxPlayerSkin = idx;
+            PlayerPrefs.SetInt("idxPlayerSkin", idxPlayerSkin);
+
+            if (playerInstance)
+                Destroy(playerInstance.gameObject);
+            playerInstance = Instantiate(playerPrefab, playerSpawn.position, playerSpawn.rotation);
+            playerInstance.GetComponent<PlayerSkin>().ChangeSkin(playerSkins[idxPlayerSkin]);
+        }
+
         // Update is called once per frame
         void Update()
         {
@@ -132,6 +145,12 @@ namespace Game.Stack.Core
         public void AddCoin()
         {
             coins++;
+        }
+
+        public void ReduceCoin(int value)
+        {
+            if(coins - value >= 0)
+                coins -= value;
         }
 
         public bool CheckGameState(GameState _gameState)

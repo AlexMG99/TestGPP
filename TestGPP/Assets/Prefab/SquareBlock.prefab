@@ -9856,6 +9856,7 @@ MonoBehaviour:
   pSPerfect: {fileID: 3861863592986276491}
   pSPerfectCombo: {fileID: 3875849101826700885}
   OnStackBlockPlaced: {fileID: 11400000, guid: e13b8ff6f05ea2245bc14e7fd390a015, type: 2}
+  OnGameEnd: {fileID: 11400000, guid: 46bb48c86b45be74180038d46c5aa2bc, type: 2}
 --- !u!54 &800354039810029759
 Rigidbody:
   m_ObjectHideFlags: 0

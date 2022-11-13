@@ -24,6 +24,18 @@ namespace Game.Stack.Core
         [SerializeField]
         private Texture2D textSkin;
         public Texture2D TextSkin { get => textSkin; set => textSkin = value; }
+        
+
+        [Header("Store Properties")]
+        [SerializeField]
+        private string nameSkin;
+        public string NameSkin { get => nameSkin; set => nameSkin = value; }
+        [SerializeField]
+        private int priceSkin;
+        public int PriceSkin { get => priceSkin; set => priceSkin = value; }
+        [SerializeField]
+        private Sprite storeSprite;
+        public Sprite StoreSprite { get => storeSprite; set => storeSprite = value; }
 
     }
 }
