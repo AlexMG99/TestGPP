@@ -34,13 +34,13 @@ namespace Game.Stack.Core
 
         private PlayerState playerState = PlayerState.PS_IDLE;
 
-        enum PlayerState
+        public enum PlayerState
         {
             PS_IDLE,
             PS_JUMP,
             PS_FLOAT,
             PS_FALL,
-            PS_DIE
+            PS_DEAD
         }
 
         private void OnEnable()
@@ -141,15 +141,17 @@ namespace Game.Stack.Core
 
         private void OnCollisionEnter(Collision collision)
         {
-            if (collision.transform.CompareTag("StackBlock"))
+            if (collision.transform.CompareTag("StackBlock") && GetPlayerBottomPositionY() > collision.transform.position.y && !CheckPlayerState(PlayerState.PS_FLOAT))
                 playerState = PlayerState.PS_IDLE;
         }
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.CompareTag("Death") && GameManager.Instance.CheckGameState(GameManager.GameState.GS_PLAY))
+            if (other.CompareTag("Death") && GameManager.Instance.CheckGameState(GameManager.GameState.GS_PLAY) && !CheckPlayerState(PlayerState.PS_DEAD))
             {
                 OnGameEnd.RaisedEvent();
+                FallBall();
+                playerState = PlayerState.PS_DEAD;
             }
         }
 
@@ -158,6 +160,16 @@ namespace Game.Stack.Core
             Vector3 centerPos = GameManager.Instance.StackManagerInstace.GetCenterPosition();
             centerPos.y = transform.position.y;
             transform.DOMove(centerPos, 0.1f);
+        }
+
+        public float GetPlayerBottomPositionY()
+        {
+            return transform.position.y - transform.localScale.y * 0.5f;
+        }
+
+        public bool CheckPlayerState(PlayerState state)
+        {
+            return (playerState == state);
         }
     }
 }

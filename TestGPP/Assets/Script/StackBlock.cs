@@ -12,11 +12,9 @@ namespace Game.Stack.Core
         private Rigidbody rb;
         private MeshRenderer meshRenderer;
 
-        bool isMoving = true;
-
-        float thresholdPerfect = 0.25f;
-        Vector3 centerStack;
-        Vector3 direction;
+        [Header("Combo Settings")]
+        [SerializeField] private float thresholdPerfect = 0.05f;
+        [SerializeField] private int comboStart = 4;
 
         [SerializeField]
         private ParticleSystem pSPerfect;
@@ -30,6 +28,9 @@ namespace Game.Stack.Core
         StackManager stackManager;
 
         bool moveToLimit = true;
+        bool isMoving = true;
+        Vector3 centerStack;
+        Vector3 direction;
 
         public StackBlock Init(StackManager.DirectionAxis dA, float _speed, Vector3 _centerStack, Color col, StackManager _stackManager)
         {
@@ -122,7 +123,8 @@ namespace Game.Stack.Core
         {
             if(collision.transform.CompareTag("Player") && isMoving)
             {
-                if(collision.transform.position.y > transform.position.y)
+                PlayerController playerController = collision.transform.GetComponent<PlayerController>();
+                if (playerController.GetPlayerBottomPositionY() > transform.position.y && !playerController.CheckPlayerState(PlayerController.PlayerState.PS_FLOAT))
                     StopBlock(Vector3.Distance(centerStack, transform.localPosition) < thresholdPerfect && (transform.localScale.x > 0.05f && (transform.localScale.z > 0.05f)));
             }
         }
@@ -155,20 +157,15 @@ namespace Game.Stack.Core
             ParticleSystem ps = Instantiate(pSPerfect, pSPerfect.transform.position, pSPerfect.transform.rotation, transform);
             ps.Play();
 
-            int comboStart = 4;
             // Combo x+
             if (stackManager.GetComboCount() >= comboStart)
             {
                 StartCoroutine(SpawnComboParticles(stackManager.GetComboCount() - comboStart, pSPerfectCombo.startLifetime * 0.7f));
 
                 if (stackManager.GetComboCount() > comboStart)
-                {
                     GrowBlock();
-                }
                 else
-                {
                     Audio.AudioManager.Instance.PlaySFX("SFX_Perfect");
-                }
             }
             else
                 Audio.AudioManager.Instance.PlaySFX("SFX_Perfect");
@@ -224,21 +221,6 @@ namespace Game.Stack.Core
                     break;
             }
 
-            if (moveToLimit && distToCenter < 0)
-            {
-                OnGameEnd.RaisedEvent();
-                Rb.isKinematic = false;
-                Rb.useGravity = true;
-                return;
-            }
-            else if (!moveToLimit && distToCenter > 0)
-            {
-                OnGameEnd.RaisedEvent();
-                Rb.isKinematic = false;
-                Rb.useGravity = true;
-                return;
-            }
-
             Vector3 newPos = transform.position + direction * distToCenter * 0.5f;
             transform.position = newPos;
             transform.localScale = newScale;
@@ -271,7 +253,8 @@ namespace Game.Stack.Core
         {
             // Break block by faking
             Vector3 newScale = Vector3.zero;
-            float growScale = 0.1f;
+            float growScale = 0.05f;
+            int dirSign = 1;
 
             switch (directionAxis)
             {
@@ -279,12 +262,14 @@ namespace Game.Stack.Core
                     {
                         float zScale = (transform.localScale.z + growScale) > 1 ? 1 : (transform.localScale.z + growScale);
                         newScale = new Vector3(transform.localScale.x, transform.localScale.y, zScale);
+                        dirSign = (int)Mathf.Sign(transform.localPosition.z);
                     }
                     break;
                 case StackManager.DirectionAxis.A_RIGHT:
                     {
                         float xScale = (transform.localScale.x + growScale) > 1 ? 1 : (transform.localScale.x + growScale);
                         newScale = new Vector3(xScale, transform.localScale.y, transform.localScale.z);
+                        dirSign = (int)Mathf.Sign(-transform.localPosition.x);
                     }
                     break;
             }
@@ -295,7 +280,8 @@ namespace Game.Stack.Core
                 return;
             }
 
-            Vector3 newPos = transform.position + direction * growScale * 0.5f;
+            
+            Vector3 newPos = transform.position + direction * growScale * 0.5f * dirSign;
             transform.DOMove(newPos, 0.25f);
             transform.DOScale(newScale, 0.25f);
 
