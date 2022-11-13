@@ -20,16 +20,15 @@ namespace Game.Stack.Core
 
         public IEnumerator ChangeBackground()
         {
-            float time = 1f;
-            float startTime = Time.deltaTime;
+            float time = 1.5f;
+            float startTime = Time.time;
 
-            while (time > Time.deltaTime - startTime)
+            while (time > Time.time - startTime)
             {
-                skyboxMat.SetColor("_SkyGradientTop", Color.Lerp(skyboxMat.GetColor("_SkyGradientTop"), stackManager.GetColorSlabFromList(5), ((Time.deltaTime - startTime) / time)));
-                skyboxMat.SetColor("_SkyGradientBottom", Color.Lerp(skyboxMat.GetColor("_SkyGradientBottom"), stackManager.GetColorSlabFromList(5), ((Time.deltaTime - startTime) / time)));
+                skyboxMat.SetColor("_SkyGradientTop", Color.Lerp(skyboxMat.GetColor("_SkyGradientTop"), stackManager.GetColorSlabFromList(5), ((Time.time - startTime) / time)));
+                skyboxMat.SetColor("_SkyGradientBottom", Color.Lerp(skyboxMat.GetColor("_SkyGradientBottom"), stackManager.GetColorSlabFromList(5), ((Time.time - startTime) / time)));
 
-                skyboxMat.SetColor("_HorizonLineColor", Color.Lerp(skyboxMat.GetColor("_HorizonLineColor"), stackManager.GetColorSlabFromList(1), ((Time.deltaTime - startTime) / time)));
-
+                skyboxMat.SetColor("_HorizonLineColor", Color.Lerp(skyboxMat.GetColor("_HorizonLineColor"), stackManager.GetColorSlabFromList(1), ((Time.time - startTime) / time)));
                 yield return null;
             }
 
