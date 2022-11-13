@@ -21,4 +21,10 @@ public class GradientSO : ScriptableObject
             currentValue += step;
         return gradient.Evaluate(currentValue);
     }
+
+    public Color GetRandomColor()
+    {
+        float randValue = Random.Range(0f, 1f);
+        return gradient.Evaluate(randValue);
+    }
 }

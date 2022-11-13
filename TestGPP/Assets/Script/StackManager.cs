@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Game.Stack.Core
 {
+    [RequireComponent(typeof(EnvironmentController))]
     public class StackManager : MonoBehaviour
     {
         [Header("Stack Configuration")]
@@ -32,6 +33,10 @@ namespace Game.Stack.Core
 
         int comboCount = 0;
 
+
+        private EnvironmentController environmentController;
+        private List<Color> colorsSlabs = new List<Color>();
+
         public enum DirectionAxis
         {
             A_NONE,
@@ -39,10 +44,16 @@ namespace Game.Stack.Core
             A_RIGHT
         }
 
+        private void Awake()
+        {
+            environmentController = GetComponent<EnvironmentController>();
+        }
+
         private void Start()
         {
             Init();
         }
+
         void Init()
         {
             spawnOffset = Vector2.zero;
@@ -50,7 +61,10 @@ namespace Game.Stack.Core
             stackBlockSpeed = stackBlockSO.SpeedMov;
             stackBlockScale = stackBlockSO.StackPrefab.transform.localScale;
 
-            startPlatform.material.color = stackBlockSO.Gradient.GetColor();
+            startPlatform.material.color = GetColorStackBlock();
+
+            lastColor = stackBlockSO.Gradient.GetRandomColor();
+            nextColor = stackBlockSO.Gradient.GetRandomColor();
         }
 
         private void OnEnable()
@@ -83,7 +97,7 @@ namespace Game.Stack.Core
             Vector3 centerPos = GameManager.Instance.StackCount * stackBlockSO.OffsetY * transform.up + transform.right * spawnOffset.x + transform.forward * spawnOffset.y;
 
             StackBlock stackBlock = Instantiate(stackBlockSO.StackPrefab, spawnPos, Quaternion.identity, transform).
-                Init(directionAxis, stackBlockSpeed, centerPos, stackBlockSO.Gradient.GetColor(), this);
+                Init(directionAxis, stackBlockSpeed, centerPos, GetColorStackBlock(), this);
              stackBlock.transform.localScale = stackBlockScale;
 
             stackBlockSpeed += stackBlockSO.AccMov;
@@ -91,6 +105,8 @@ namespace Game.Stack.Core
             stackBlocks.Add(stackBlock);
 
             GameManager.Instance.IncreaseStackCount();
+
+            StartCoroutine(environmentController.ChangeBackground());
         }
 
         private void RestartGame()
@@ -139,6 +155,38 @@ namespace Game.Stack.Core
         public int GetComboCount()
         {
             return comboCount;
+        }
+
+        int colValue = 0;
+        int colChangeValue = 10;
+
+        Color lastColor;
+        Color nextColor;
+
+        Color GetColorStackBlock()
+        {
+            float value = (float)colValue / (float)colChangeValue;
+            Color col = Color.Lerp(lastColor, nextColor, value);
+            if (colValue < colChangeValue)
+                colValue++;
+            else
+            {
+                colValue = 0;
+                lastColor = nextColor;
+                nextColor = stackBlockSO.Gradient.GetRandomColor();
+            }
+
+            colorsSlabs.Add(col);
+
+            return col;
+        }
+
+        public Color GetColorSlabFromList(int back)
+        {
+            if (colorsSlabs.Count > back)
+                return colorsSlabs[colorsSlabs.Count - back];
+            else
+                return colorsSlabs[colorsSlabs.Count - 1];
         }
     }
 }
