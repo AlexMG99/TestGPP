@@ -148,7 +148,7 @@ namespace Game.Stack.Core
         {
             Audio.AudioManager.Instance.PlaySFX("SFX_Perfect");
 
-            Handheld.Vibrate();
+            //Handheld.Vibrate();
 
             stackManager.IncreaseComboCount();
 

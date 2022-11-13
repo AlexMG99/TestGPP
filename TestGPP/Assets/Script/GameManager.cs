@@ -114,6 +114,8 @@ namespace Game.Stack.Core
         {
             gameState = GameState.GS_END;
             PlayerPrefs.SetInt("Coins", coins);
+
+            Audio.AudioManager.Instance.BreakIncrementPitch("SFX_Perfect");
         }
 
         public void RestartGame()
