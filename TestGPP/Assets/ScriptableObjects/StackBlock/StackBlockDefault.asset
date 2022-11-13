@@ -15,6 +15,6 @@ MonoBehaviour:
   stackPrefab: {fileID: 146279826487088687, guid: 177c858886beab8438aed2cb1073e3c1,
     type: 3}
   offsetY: 0.2
-  speedMov: 0.01
-  accMov: 0.001
+  speedMov: 0.015
+  accMov: 0.0001
   gradient: {fileID: 11400000, guid: 8eab4107215c08147b2d4978c85599b7, type: 2}

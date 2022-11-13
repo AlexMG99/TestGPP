@@ -137,7 +137,7 @@ MonoBehaviour:
   jumpForce: 200
   staminaSliderBGImage: {fileID: 2512889353399546087}
   staminaSliderFillImage: {fileID: 4270448178068739885}
-  maxTimeFly: 2
+  maxTimeFly: 1.25
   OnStackBlockPlaced: {fileID: 11400000, guid: e13b8ff6f05ea2245bc14e7fd390a015, type: 2}
   OnGameEnd: {fileID: 11400000, guid: 46bb48c86b45be74180038d46c5aa2bc, type: 2}
 --- !u!114 &7918828774619550735

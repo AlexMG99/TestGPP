@@ -61,10 +61,12 @@ namespace Game.Stack.Core
             stackBlockSpeed = stackBlockSO.SpeedMov;
             stackBlockScale = stackBlockSO.StackPrefab.transform.localScale;
 
-            startPlatform.material.color = GetColorStackBlock();
-
             lastColor = stackBlockSO.Gradient.GetRandomColor();
-            nextColor = stackBlockSO.Gradient.GetRandomColor();
+            do {
+                nextColor = stackBlockSO.Gradient.GetRandomColor();
+            } while (nextColor == lastColor);
+
+            startPlatform.material.color = GetColorStackBlock();
         }
 
         private void OnEnable()
@@ -173,7 +175,9 @@ namespace Game.Stack.Core
             {
                 colValue = 0;
                 lastColor = nextColor;
-                nextColor = stackBlockSO.Gradient.GetRandomColor();
+                do {
+                    nextColor = stackBlockSO.Gradient.GetRandomColor();
+                } while (nextColor == lastColor);
             }
 
             colorsSlabs.Add(col);
